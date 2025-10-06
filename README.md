@@ -2,7 +2,7 @@
 
 A modern hotel booking application built with Vue 3 and Vite. This app allows users to search for hotels, view room details, and make bookings.
 
-# Live: [Hotel Management Demo](https://hotelmanagement-theta.vercel.app/)
+# Live: [Hotel Management Demo](https://hotel-management-app-nine.vercel.app/)
 
 ## Recommended IDE Setup
 
