@@ -1,3 +1,6 @@
+// Import images so Vite can process them properly
+import roomPenthouseImage from "@/assets/images/room-penthouse.jpg";
+
 export const rooms = [
   {
     id: 1,
@@ -12,7 +15,7 @@ export const rooms = [
       "Mini Bar",
       "City View",
     ],
-    image: "assets/images/room-penthouse.jpg",
+    image: roomPenthouseImage,
   },
   {
     id: 2,
@@ -21,7 +24,7 @@ export const rooms = [
       "Wake up to stunning ocean views. This room features a comfortable queen bed and modern amenities.",
     price: 180,
     amenities: ["Queen Bed", "Free WiFi", "Air Conditioning", "Ocean View"],
-    image: "assets/images/room-penthouse.jpg",
+    image: roomPenthouseImage,
   },
   {
     id: 3,
@@ -30,7 +33,7 @@ export const rooms = [
       "A cozy and affordable room perfect for solo travelers or couples, equipped with all essential comforts.",
     price: 120,
     amenities: ["Double Bed", "Free WiFi", "Air Conditioning"],
-    image: "assets/images/room-penthouse.jpg",
+    image: roomPenthouseImage,
   },
   {
     id: 4,
@@ -45,7 +48,7 @@ export const rooms = [
       "Panoramic View",
       "Butler Service",
     ],
-    image: "assets/images/room-penthouse.jpg",
+    image: roomPenthouseImage,
   },
 ];
 
