@@ -1,6 +1,6 @@
 <template>
-  <div class="booking-card card">
-    <div class="booking-card__header">
+  <div class="booking-card card" ref="bookingCard">
+    <div class="booking-card__header" ref="header">
       <h3 class="booking-card__room-name">{{ booking.room_name }}</h3>
       <span
         class="booking-card__status"
@@ -9,31 +9,22 @@
         {{ formatStatus(booking.status) }}
       </span>
     </div>
-    <div class="booking-card__body">
-      <div class="booking-card__detail">
-        <span class="detail-label">Confirmation #</span>
-        <span class="detail-value conf-number">{{
-          booking.confirmation_number
-        }}</span>
-      </div>
-      <div class="booking-card__detail">
-        <span class="detail-label">Dates</span>
-        <span class="detail-value">
-          {{ formatDate(booking.check_in) }} &rarr;
-          {{ formatDate(booking.check_out) }}
-        </span>
-      </div>
-      <div class="booking-card__detail">
-        <span class="detail-label">Total Price</span>
-        <span class="detail-value price">${{ booking.total_price }}</span>
-      </div>
-      <div class="booking-card__detail">
-        <span class="detail-label">Guests</span>
-        <span class="detail-value">{{ booking.guests || 1 }}</span>
+    <div class="booking-card__body" ref="body">
+      <div 
+        class="booking-card__detail" 
+        v-for="detail in bookingDetails" 
+        :key="detail.label"
+      >
+        <span class="detail-label">{{ detail.label }}</span>
+        <span class="detail-value" :class="detail.class">{{ detail.value }}</span>
       </div>
     </div>
-    <div class="booking-card__footer" v-if="booking.status === 'confirmed'">
-      <button class="btn btn--secondary" @click="$emit('cancel', booking.id)">
+    <div class="booking-card__footer" v-if="booking.status === 'confirmed'" ref="footer">
+      <button 
+        class="btn btn--secondary" 
+        ref="cancelButton"
+        @click="handleCancelClick"
+      >
         Cancel Booking
       </button>
     </div>
@@ -41,13 +32,100 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref, onMounted, inject } from "vue";
 
 const props = defineProps({
   booking: { type: Object, required: true },
 });
 
-defineEmits(["cancel"]);
+const emit = defineEmits(["cancel"]);
+
+const gsap = inject('gsap');
+
+// Template refs
+const bookingCard = ref(null);
+const header = ref(null);
+const body = ref(null);
+const footer = ref(null);
+const cancelButton = ref(null);
+
+onMounted(() => {
+  if (!bookingCard.value) return;
+  
+  gsap.set([bookingCard.value, header.value, body.value, footer.value], {
+    opacity: 0,
+    y: 20
+  });
+  
+  gsap.to(bookingCard.value, {
+    opacity: 1,
+    y: 0,
+    duration: 0.5,
+    ease: "power2.out"
+  });
+  
+  gsap.to([header.value, body.value], {
+    opacity: 1,
+    y: 0,
+    duration: 0.4,
+    stagger: 0.1,
+    ease: "power2.out",
+    delay: 0.1
+  });
+  
+  if (footer.value) {
+    gsap.to(footer.value, {
+      opacity: 1,
+      y: 0,
+      duration: 0.4,
+      ease: "power2.out",
+      delay: 0.2
+    });
+  }
+});
+
+const handleCancelClick = () => {
+  if (!cancelButton.value) return;
+  
+  gsap.to(cancelButton.value, {
+    scale: 0.95,
+    duration: 0.1,
+    ease: "power2.in"
+  });
+  
+  gsap.to(cancelButton.value, {
+    scale: 1,
+    duration: 0.2,
+    ease: "back.out(1.7)"
+  });
+  
+  setTimeout(() => {
+    emit('cancel', props.booking.id);
+  }, 150);
+};
+
+const bookingDetails = computed(() => [
+  {
+    label: "Confirmation #",
+    value: props.booking.confirmation_number,
+    class: "conf-number"
+  },
+  {
+    label: "Dates",
+    value: `${formatDate(props.booking.check_in)} → ${formatDate(props.booking.check_out)}`,
+    class: ""
+  },
+  {
+    label: "Total Price",
+    value: `$${props.booking.total_price}`,
+    class: "price"
+  },
+  {
+    label: "Guests",
+    value: props.booking.guests || 1,
+    class: ""
+  }
+]);
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -183,7 +261,6 @@ const formatStatus = (status) => {
   transform: none;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .booking-card__header {
     flex-direction: column;
